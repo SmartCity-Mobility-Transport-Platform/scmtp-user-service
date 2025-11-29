@@ -3,6 +3,7 @@ import { createUser, findUserByEmail, getProfile, upsertProfile } from '../repos
 import { hashPassword, comparePassword } from '../utils/password';
 import { signJwt } from '../utils/jwt';
 import { User, UserProfile } from '../models/user';
+import { publishUserEvent } from '../kafka/producer';
 
 export class AuthError extends Error {
   public readonly statusCode: number;
@@ -40,6 +41,19 @@ export async function registerUser(input: RegisterInput): Promise<LoginResult> {
   const user = await createUser(email, passwordHash, 'USER');
 
   await upsertProfile(user.id, input.name ?? null, input.phone ?? null, null);
+
+  // Publish user registered event to Kafka
+  try {
+    await publishUserEvent('UserRegistered', {
+      userId: user.id,
+      email: user.email,
+      name: input.name || undefined,
+      phone: input.phone || undefined,
+    });
+  } catch (error) {
+    // Log but don't fail registration if Kafka is unavailable
+    console.error('Failed to publish UserRegistered event:', error);
+  }
 
   const token = signJwt({
     sub: user.id,

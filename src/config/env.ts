@@ -12,6 +12,7 @@ export interface EnvConfig {
   pgUser: string;
   pgPassword: string;
   pgDatabase: string;
+  kafkaBrokers?: string;
 }
 
 const getNumber = (value: string | undefined, fallback: number): number => {
@@ -25,10 +26,11 @@ export const env: EnvConfig = {
   jwtSecret: process.env.JWT_SECRET || 'dev-secret-change-me',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1h',
   pgHost: process.env.PG_HOST || 'localhost',
-  pgPort: getNumber(process.env.PG_PORT, 5432),
+  pgPort: getNumber(process.env.PG_PORT, 5435),
   pgUser: process.env.PG_USER || 'scmtp_user',
   pgPassword: process.env.PG_PASSWORD || 'scmtp_pass',
-  pgDatabase: process.env.PG_DATABASE || 'scmtp_user_service'
+  pgDatabase: process.env.PG_DATABASE || 'scmtp_user_service',
+  kafkaBrokers: process.env.KAFKA_BROKERS
 };
 
 
