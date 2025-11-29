@@ -10,7 +10,7 @@ async function bootstrap(): Promise<void> {
   await runMigrations();
 
   // Initialize Kafka producer (non-blocking)
-  await initKafkaProducer().catch((err) => {
+  await initKafkaProducer().catch((err: unknown) => {
     // eslint-disable-next-line no-console
     console.error('Failed to initialize Kafka producer:', err);
   });
