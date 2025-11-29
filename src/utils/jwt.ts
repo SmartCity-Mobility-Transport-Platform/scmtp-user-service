@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { env } from '../config/env';
 import { UserRole } from '../models/user';
 
@@ -11,7 +11,7 @@ export interface JwtPayload {
 export function signJwt(payload: JwtPayload): string {
   return jwt.sign(payload, env.jwtSecret, {
     expiresIn: env.jwtExpiresIn
-  });
+  } as SignOptions);
 }
 
 export function verifyJwt(token: string): JwtPayload {
